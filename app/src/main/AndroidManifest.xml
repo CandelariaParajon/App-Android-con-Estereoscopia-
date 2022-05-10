@@ -3,7 +3,7 @@
     package="com.example.rer">
 
     <uses-feature android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="true" /> // Permiso para ingresar a camara
 
     <application
         android:allowBackup="true"
