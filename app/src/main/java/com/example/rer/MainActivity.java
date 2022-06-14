@@ -5,14 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //ACÁ HAY QUE AGREGAR LA LLAMA A LA FUNCION DE ABRIR LA GALERIA     private void openSystemStorage() {
+                openSystemStorage();
 
             }
         });
@@ -99,15 +98,21 @@ public class MainActivity extends AppCompatActivity {
     private void openSystemStorage() {
         Intent intent2 = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent2.setType("image/");
-       // startActivityForResult(intent2.createChooser(intent2,"seleccione la app", 10));
+        startActivityForResult(intent2.createChooser(intent2,"seleccione la app"), 10);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imgBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imgBitmap);
+        }
+
+        if (requestCode ==10 && resultCode == RESULT_OK) {
+            Uri path = data.getData();
+            imageView.setImageURI(path);
         }
     }
 
