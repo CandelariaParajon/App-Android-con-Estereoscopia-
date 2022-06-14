@@ -12,19 +12,19 @@ public class Calibration {
         if (calculatedDistance <= distanceFor30cm) {
             System.out.println("entra a 30");
             proximateDistance = ((calculatedDistance * 30)/distanceFor30cm);
-            System.out.println("Se encuentra a " + proximateDistance + " del objetivo");
+            System.out.println("Se encuentra a " + proximateDistance + " centimetros del objetivo");
         }
 
         if (distanceFor30cm < calculatedDistance && calculatedDistance <= distanceFor50cm) {
             System.out.println("entra a 50");
             proximateDistance = ((calculatedDistance * 50)/distanceFor50cm);
-            System.out.println("Se encuentra a " + proximateDistance + " del objetivo");
+            System.out.println("Se encuentra a " + proximateDistance + " centimetros del objetivo");
         }
 
         if (distanceFor50cm < calculatedDistance && calculatedDistance <= distanceFor100cm) {
             System.out.println("entra a 100");
             proximateDistance = ((calculatedDistance * 100)/distanceFor100cm);
-            System.out.println("Se encuentra a " + proximateDistance + " del objetivo");
+            System.out.println("Se encuentra a " + proximateDistance + " centimetros del objetivo");
         }
 
 

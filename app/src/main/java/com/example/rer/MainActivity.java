@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     Paint paint = new Paint();
     float xPixel;
     Calibration calObj = new Calibration();
-   // Bitmap bitmap = Bitmap.createBitmap(R.id.imageView);
 
 
     @Override
@@ -119,18 +118,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-     public void cleanArray (float anArray []) {
-         for (int i = 0; i < anArray.length-1; i++) {
-             anArray[i]=0;
-             System.out.printf("\n el valor " + i + " es: " + anArray[i]);
 
-         }
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
 }
