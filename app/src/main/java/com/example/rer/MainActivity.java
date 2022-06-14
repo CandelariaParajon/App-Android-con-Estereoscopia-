@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Button btnCamera;
-    Button btnClean;
+    Button btngalery;
     ImageView imageView;
     Paint paint = new Paint();
     float xPixel;
@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnCamera = findViewById(R.id.btnCamara);
-        btnClean = findViewById(R.id.btnClean);
+        btnCamera = findViewById(R.id.cameraButton);
+        btngalery = findViewById(R.id.galeryButton);
         imageView = findViewById(R.id.imageView);
         ArrayList <Float> coords = new ArrayList<Float>();
 
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnClean.setOnClickListener(new View.OnClickListener() {
+        btngalery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
