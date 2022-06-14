@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     Paint paint = new Paint();
     float xPixel;
+    Calibration calObj = new Calibration();
    // Bitmap bitmap = Bitmap.createBitmap(R.id.imageView);
 
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 float addition = coords.get(0) - coords.get(1);
                                 System.out.println("the distance between objects is: " + addition);
+                                calObj.getDistanceFromDevice(addition);
                             }
 
                             if (coords.get(0) < coords.get(1)) {
