@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     Paint paint = new Paint();
     float xPixel;
     Calibration calObj = new Calibration();
+    ArrayList <Float> coords = new ArrayList<Float>();
 
 
     @Override
@@ -30,12 +31,15 @@ public class MainActivity extends AppCompatActivity {
         btnCamera = findViewById(R.id.cameraButton);
         btngalery = findViewById(R.id.galeryButton);
         imageView = findViewById(R.id.imageView);
-        ArrayList <Float> coords = new ArrayList<Float>();
+
 
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (coords.size() > 0) {
+                    coords = new ArrayList<Float>();
+                }
                   abrirCamara();
             }
         });
@@ -43,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
         btngalery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (coords.size() > 0) {
+                    coords = new ArrayList<Float>();
+                }
                 openSystemStorage();
 
             }
