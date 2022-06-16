@@ -10,8 +10,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,24 +26,31 @@ public class MainActivity extends AppCompatActivity {
     float xPixel;
     Calibration calObj = new Calibration();
     ArrayList <Float> coords = new ArrayList<Float>();
+    boolean imageIsBeingDisplay = false;
+    TextView textView;
+    String distanciaFinal;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature((Window.FEATURE_NO_TITLE));
+      this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         btnCamera = findViewById(R.id.cameraButton);
         btngalery = findViewById(R.id.galeryButton);
         imageView = findViewById(R.id.imageView);
-
+        textView = findViewById(R.id.textDistance);
+        textView.setVisibility(TextView.INVISIBLE);
 
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (coords.size() > 0) {
-                    coords = new ArrayList<Float>();
-                }
+                textView.setVisibility(TextView.INVISIBLE);
+                coords = new ArrayList<Float>();
+                  imageIsBeingDisplay= false;
                   abrirCamara();
             }
         });
@@ -47,44 +58,52 @@ public class MainActivity extends AppCompatActivity {
         btngalery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (coords.size() > 0) {
-                    coords = new ArrayList<Float>();
-                }
+                textView.setVisibility(TextView.INVISIBLE);
+                coords = new ArrayList<Float>();
+                imageIsBeingDisplay= false;
                 openSystemStorage();
-
             }
         });
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
+                if(imageIsBeingDisplay) {
+                    switch (event.getAction()) {
 
-                    case MotionEvent.ACTION_DOWN:
-                        xPixel = event.getX();
-                        String xString = String.valueOf(xPixel);
-                        System.out.println("\n The x coordinate is: " + xString);
-                        coords.add(xPixel);
-                        System.out.println("The ArrayList contains: " + coords);
+                        case MotionEvent.ACTION_DOWN:
+                            xPixel = event.getX();
+                            String xString = String.valueOf(xPixel);
+                            System.out.println("\n The x coordinate is: " + xString);
+                            coords.add(xPixel);
+                            System.out.println("The ArrayList contains: " + coords);
+                            textView.setText("Para calcular la distancia, seleccione el mismo objeto en ambos lados.\nPrimer punto seleccionado!");
 
-                        if(coords.size()> 1) {
+                            if (coords.size() > 1) {
 
-                            if (coords.get(0) > coords.get(1)) {
+                                if (coords.get(0) > coords.get(1)) {
 
-                                float addition = coords.get(0) - coords.get(1);
-                                System.out.println("the distance between objects is: " + addition);
-                                calObj.getDistanceFromDevice(addition);
+                                    float addition = coords.get(0) - coords.get(1);
+                                    System.out.println("the distance between objects is: " + addition);
+                                    distanciaFinal = String.format("%.2f",calObj.getDistanceFromDevice(addition));
+                                    textView.setText("El objeto se encuentra aproximadamente a:\n"+ distanciaFinal + "cm");
+                                    textView.setVisibility(TextView.VISIBLE);
+                                }
+
+                                if (coords.get(0) < coords.get(1)) {
+
+                                    float addition = coords.get(1) - coords.get(0);
+                                    System.out.println("the distance between objects is: " + addition);
+                                    distanciaFinal = String.format("%.2f",calObj.getDistanceFromDevice(addition));
+                                    textView.setText("El objeto se encuentra aproximadamente a:\n"+ distanciaFinal + "cm" );
+                                    textView.setVisibility(TextView.VISIBLE);
+                                }
+
                             }
 
-                            if (coords.get(0) < coords.get(1)) {
-
-                                float addition = coords.get(1) - coords.get(0);
-                                System.out.println("the distance between objects is: " + addition);
-                            }
-
-                        }
-
+                    }
                 }
+
                 return false;
             }
         });
@@ -115,14 +134,18 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imgBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imgBitmap);
+            imageIsBeingDisplay= true;
+            textView.setText("Para calcular la distancia, seleccione el mismo objeto en ambos lados.");
+            textView.setVisibility(TextView.VISIBLE);
         }
 
         if (requestCode ==10 && resultCode == RESULT_OK) {
             Uri path = data.getData();
             imageView.setImageURI(path);
+            imageIsBeingDisplay= true;
+            textView.setText("Para calcular la distancia, seleccione el mismo objeto en ambos lados.");
+            textView.setVisibility(TextView.VISIBLE);
         }
     }
-
-
 
 }

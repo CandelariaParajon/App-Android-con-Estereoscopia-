@@ -6,7 +6,7 @@ public class Calibration {
     float distanceFor100cm = (float) 584.989;
     float proximateDistance;
 
-    public void getDistanceFromDevice(float calculatedDistance) {
+    public float getDistanceFromDevice(float calculatedDistance) {
         System.out.println("Analizando datos...");
 
         if (calculatedDistance <= distanceFor30cm) {
@@ -21,12 +21,13 @@ public class Calibration {
             System.out.println("Se encuentra a " + proximateDistance + " centimetros del objetivo");
         }
 
-        if (distanceFor50cm < calculatedDistance && calculatedDistance <= distanceFor100cm) {
+        if (distanceFor50cm < calculatedDistance ) {
             System.out.println("entra a 100");
             proximateDistance = ((calculatedDistance * 100)/distanceFor100cm);
             System.out.println("Se encuentra a " + proximateDistance + " centimetros del objetivo");
         }
 
+        return proximateDistance;
 
     }
 
