@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,14 +22,18 @@ public class MainActivity extends AppCompatActivity {
     Button btnCamera;
     Button btngalery;
     ImageView imageView;
-    Paint paint = new Paint();
     float xPixel;
     Calibration calObj = new Calibration();
     ArrayList <Float> coords = new ArrayList<Float>();
     boolean imageIsBeingDisplay = false;
     TextView textView;
+    TextView textColorDisplay;
+    TextView primerPunto;
+    TextView segundoPunto;
     String distanciaFinal;
-
+    Bitmap bitmap ;
+    int imageWidth;
+    int imageHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,14 @@ public class MainActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textDistance);
         textView.setVisibility(TextView.INVISIBLE);
-
+        primerPunto = findViewById(R.id.textPrimerPunto);
+        primerPunto.setVisibility(TextView.INVISIBLE);
+        segundoPunto = findViewById(R.id.textSegundoPunto);
+        segundoPunto.setVisibility(TextView.INVISIBLE);
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache(true);
+        textColorDisplay = findViewById(R.id.textColorDisplay);
+        textColorDisplay.setVisibility(TextView.INVISIBLE);
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,18 +80,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(imageIsBeingDisplay) {
+                    textColorDisplay.setVisibility(TextView.VISIBLE);
+                    primerPunto.setVisibility(TextView.INVISIBLE);
+                    if (coords.size()>1){
+                        coords = new ArrayList<Float>();
+                        segundoPunto.setVisibility(TextView.INVISIBLE);
+                    }
+
                     switch (event.getAction()) {
 
                         case MotionEvent.ACTION_DOWN:
                             xPixel = event.getX();
-                            String xString = String.valueOf(xPixel);
-                            System.out.println("\n The x coordinate is: " + xString);
                             coords.add(xPixel);
-                            System.out.println("The ArrayList contains: " + coords);
-                            textView.setText("Para calcular la distancia, seleccione el mismo objeto en ambos lados.\nPrimer punto seleccionado!");
-
+                            System.out.println("Coords: "+ coords);
+                            primerPunto.setVisibility(TextView.VISIBLE);
+                            bitmap = imageView.getDrawingCache();
+                            int pixel = bitmap.getPixel ((int) event.getX(), (int) event.getY());
+                            int r = Color.red(pixel);
+                            int g = Color.green (pixel);
+                            int b = Color.blue (pixel);
+                            textColorDisplay.setBackgroundColor(Color.rgb(r,g,b));
+                            textColorDisplay.setText("RGB: " + r +' '+g+" "+b);
+                        //    int pixelX = primerPixelDeEseColor(Color.rgb(r,g,b), imageHeight, imageWidth);
                             if (coords.size() > 1) {
-
+                                segundoPunto.setVisibility(TextView.VISIBLE);
                                 if (coords.get(0) > coords.get(1)) {
 
                                     float addition = coords.get(0) - coords.get(1);
@@ -110,21 +133,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    public int getPixelColor(int x, int y) {
-//        Color color = Bitmap.get
-//    }
-
     private void abrirCamara(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //if(intent.resolveActivity(getPackageManager()) != null){
             startActivityForResult(intent, 1);
        // }
+        textColorDisplay.setVisibility(TextView.INVISIBLE);
+        primerPunto.setVisibility(TextView.INVISIBLE);
+        segundoPunto.setVisibility(TextView.INVISIBLE);
     }
 
     private void openSystemStorage() {
         Intent intent2 = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent2.setType("image/");
         startActivityForResult(intent2.createChooser(intent2,"seleccione la app"), 10);
+        textColorDisplay.setVisibility(TextView.INVISIBLE);
+        primerPunto.setVisibility(TextView.INVISIBLE);
+        segundoPunto.setVisibility(TextView.INVISIBLE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -134,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imgBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imgBitmap);
+            imageWidth = imageView.getWidth();
+            imageHeight = imageView.getHeight();
             imageIsBeingDisplay= true;
             textView.setText("Para calcular la distancia, seleccione el mismo objeto en ambos lados.");
             textView.setVisibility(TextView.VISIBLE);
@@ -142,10 +169,33 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode ==10 && resultCode == RESULT_OK) {
             Uri path = data.getData();
             imageView.setImageURI(path);
+            imageWidth = imageView.getWidth();
+            imageHeight = imageView.getHeight();
             imageIsBeingDisplay= true;
             textView.setText("Para calcular la distancia, seleccione el mismo objeto en ambos lados.");
             textView.setVisibility(TextView.VISIBLE);
         }
+    }
+
+    public int primerPixelDeEseColor(int colorBuscado, int alto, int ancho)
+    {
+       int colorBuscadoEnX = -1;
+       for( int i = 0; i < alto; i++ )
+           {
+               for(int j = ancho/2; j < ancho;j++)
+               {
+                   int pixel = bitmap.getPixel (j, i);
+                   int r = Color.red(pixel);
+                   int g = Color.green (pixel);
+                   int b = Color.blue (pixel);
+                   int colorEnBit = Color.rgb(r,g,b);
+                   if(colorEnBit == colorBuscado && colorBuscadoEnX == -1)
+                   {
+                       colorBuscadoEnX = j;
+                   }
+               }
+           }
+        return colorBuscadoEnX;
     }
 
 }
